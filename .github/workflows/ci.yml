@@ -11,8 +11,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Install Dune and build
+      - name: Install Dune
         uses: ocaml-dune/setup-dune@v2
         with:
+          version: latest
+          steps: install-dune enable-pkg
+          workspace: dune-workspace.ci
+
+      - name: Generate lock dir
+        run: dune pkg lock --workspace=dune-workspace.ci
+
+      - name: Build and test
+        uses: ocaml-dune/setup-dune@v2
+        with:
+          version: latest
           workspace: dune-workspace.ci
           cache-prefix: v1-${{ hashFiles('dune-project', 'dune-workspace.ci') }}
